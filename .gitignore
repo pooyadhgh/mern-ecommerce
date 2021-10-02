@@ -52,5 +52,5 @@ yarn-debug.log*
 yarn-error.log*
 
 
-products.js
 client/public/images
+server/data
