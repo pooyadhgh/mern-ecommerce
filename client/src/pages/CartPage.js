@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { addToCart } from '../actions/cartActions';
+import { addToCart, removeFromCart } from '../actions/cartActions';
 import Message from '../components/Message';
-import Loader from '../components/Loader';
 import {
   Row,
   Col,
@@ -25,7 +24,7 @@ const CartPage = ({ match, location, history }) => {
   }, [dispatch, productId, quantity]);
 
   const removeFromCartHandler = id => {
-    console.log(id);
+    dispatch(removeFromCart(id));
   };
 
   const checkoutHandler = () => {
@@ -37,11 +36,7 @@ const CartPage = ({ match, location, history }) => {
       <Row>
         <Col md={8}>
           <h1>Cart</h1>
-          {cartItems.length === 0 ? (
-            <Message>Your cart is empty</Message>
-          ) : (
-            'haha'
-          )}
+          {cartItems.length === 0 && <Message>Your cart is empty</Message>}
 
           <ListGroup variant="flush">
             {cartItems.map(item => (
