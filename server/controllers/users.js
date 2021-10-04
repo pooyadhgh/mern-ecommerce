@@ -29,10 +29,10 @@ export const authUser = async (req, res, next) => {
     return next(error);
   }
 
-  //   if (!isValidPassword) {
-  //     const error = new HttpError('Invalid Inputs', 401);
-  //     return next(error);
-  //   }
+  if (!isValidPassword) {
+    const error = new HttpError('Invalid Inputs', 401);
+    return next(error);
+  }
 
   const token = await generateToken({ id: existingUser.id });
 
@@ -68,5 +68,54 @@ export const getUserProfile = async (req, res, next) => {
     email: existingUser.email,
     name: existingUser.name,
     isAdmin: existingUser.isAdmin,
+  });
+};
+
+export const registerUser = async (req, res, next) => {
+  const { name, email, password } = req.body;
+
+  // Check if user is registered before or not
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email });
+  } catch (err) {
+    const error = new HttpError('Signup Failed', 500);
+    return next(error);
+  }
+
+  if (existingUser) {
+    const error = new HttpError('User Existed', 422);
+    return next(error);
+  }
+
+  // Hash password
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (err) {
+    const error = new HttpError('Could Not Create User', 500);
+    return next(error);
+  }
+
+  const createdUser = new User({
+    name: name,
+    email: email,
+    password: hashedPassword,
+  });
+
+  try {
+    await createdUser.save();
+  } catch (err) {
+    const error = new HttpError('Signup Failed', 500);
+    return next(error);
+  }
+
+  const token = await generateToken({ id: createdUser.id });
+
+  res.status(201).json({
+    message: 'User Signedup',
+    userId: createdUser.id,
+    email: createdUser.email,
+    token: token,
   });
 };

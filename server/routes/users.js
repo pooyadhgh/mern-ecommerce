@@ -1,7 +1,14 @@
 import express from 'express';
-import { authUser, getUserProfile } from '../controllers/users.js';
+import {
+  authUser,
+  getUserProfile,
+  registerUser,
+} from '../controllers/users.js';
 import { checkAuth } from '../middleware/auth.js';
 const router = express.Router();
+
+// /api/users
+router.route('/').post(registerUser);
 
 // /api/users/login
 router.route('/login').post(authUser);
