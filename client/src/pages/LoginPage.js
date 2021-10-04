@@ -23,6 +23,7 @@ const LoginPage = ({ location, history }) => {
     event.preventDefault();
     dispatch(login(email, password));
   };
+
   return (
     <FormContainer>
       <h1>Login</h1>
