@@ -70,7 +70,7 @@ const RegisterPage = ({ location, history }) => {
           ></Form.Control>
         </Form.Group>
 
-        <Form.Group className="my-3" controlId="password">
+        <Form.Group className="my-3" controlId="confirm-password">
           <Form.Label>Confirm Password</Form.Label>
           <Form.Control
             type="password"
