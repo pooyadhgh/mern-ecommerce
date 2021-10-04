@@ -46,31 +46,6 @@ export const authUser = async (req, res, next) => {
   });
 };
 
-export const getUserProfile = async (req, res, next) => {
-  const userId = req.user._id;
-  let existingUser;
-
-  // Check whether user exists or not
-  try {
-    existingUser = await User.findById(userId);
-  } catch (err) {
-    const error = new HttpError('Auth Failed', 500);
-    return next(error);
-  }
-
-  if (!existingUser) {
-    const error = new HttpError('Auth Failed', 401);
-    return next(error);
-  }
-
-  res.json({
-    _id: existingUser.id,
-    email: existingUser.email,
-    name: existingUser.name,
-    isAdmin: existingUser.isAdmin,
-  });
-};
-
 export const registerUser = async (req, res, next) => {
   const { name, email, password } = req.body;
 
@@ -114,8 +89,87 @@ export const registerUser = async (req, res, next) => {
 
   res.status(201).json({
     message: 'User Signedup',
-    userId: createdUser.id,
+    _id: createdUser.id,
     email: createdUser.email,
+    name: createdUser.name,
+    isAdmin: createdUser.isAdmin,
+    token: token,
+  });
+};
+
+export const getUserProfile = async (req, res, next) => {
+  const userId = req.user._id;
+  let existingUser;
+
+  // Check whether user exists or not
+  try {
+    existingUser = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError('Auth Failed', 500);
+    return next(error);
+  }
+
+  if (!existingUser) {
+    const error = new HttpError('Auth Failed', 401);
+    return next(error);
+  }
+
+  res.json({
+    _id: existingUser.id,
+    email: existingUser.email,
+    name: existingUser.name,
+    isAdmin: existingUser.isAdmin,
+  });
+};
+
+export const updateUserProfile = async (req, res, next) => {
+  const { name, email, password } = req.body;
+  const userId = req.user._id;
+  let existingUser;
+
+  // Check whether user exists or not
+  try {
+    existingUser = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError('Auth Failed', 500);
+    return next(error);
+  }
+
+  if (!existingUser) {
+    const error = new HttpError('Auth Failed', 401);
+    return next(error);
+  }
+
+  let hashedPassword;
+  if (password) {
+    // Hash password
+    try {
+      hashedPassword = await bcrypt.hash(password, 12);
+    } catch (err) {
+      const error = new HttpError('Could Not Update User', 500);
+      return next(error);
+    }
+  }
+
+  existingUser.name = name || existingUser.name;
+  existingUser.email = email || existingUser.email;
+  if (password) existingUser.password = hashedPassword;
+
+  let updatedUser;
+  try {
+    updatedUser = await existingUser.save();
+  } catch (err) {
+    console.log('err inja');
+  }
+
+  const token = await generateToken({ id: updatedUser.id });
+
+  res.json({
+    message: 'User Updated',
+    _id: updatedUser.id,
+    email: updatedUser.email,
+    name: updatedUser.name,
+    isAdmin: updatedUser.isAdmin,
     token: token,
   });
 };
