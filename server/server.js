@@ -3,13 +3,17 @@ import dotenv from 'dotenv';
 import HttpError from './models/httpError.js';
 import connectDB from './config/db.js';
 import productRoutes from './routes/products.js';
+import userRoutes from './routes/users.js';
 
 dotenv.config();
 connectDB();
 
 const app = express();
+app.use(express.json());
 
+//Routes
 app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes);
 
 // Notfound error middleware
 app.use((req, res, next) => {
