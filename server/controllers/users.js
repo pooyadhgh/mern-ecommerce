@@ -159,7 +159,8 @@ export const updateUserProfile = async (req, res, next) => {
   try {
     updatedUser = await existingUser.save();
   } catch (err) {
-    console.log('err inja');
+    const error = new HttpError('Could Not Update User', 500);
+    return next(error);
   }
 
   const token = await generateToken({ id: updatedUser.id });
