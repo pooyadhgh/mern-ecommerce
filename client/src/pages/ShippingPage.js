@@ -8,7 +8,6 @@ import FormContainer from '../components/FormContainer';
 const ShippingPage = ({ history }) => {
   const { shippingAddress } = useSelector(state => state.cart);
   const dispatch = useDispatch();
-  console.log(shippingAddress);
 
   const [address, setAddress] = useState(
     shippingAddress ? shippingAddress.address : ''
