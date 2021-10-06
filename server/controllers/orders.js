@@ -30,5 +30,5 @@ export const addOrder = async (req, res, next) => {
     return next(error);
   }
 
-  res.json(createdOrder);
+  res.json(order);
 };

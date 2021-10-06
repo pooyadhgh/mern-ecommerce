@@ -1,10 +1,16 @@
 import { Button, Col, Row, Image, ListGroup, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { createOrder } from '../actions/orderActions';
 import CheckoutSteps from '../components/CheckoutSteps';
 import Message from '../components/Message';
+import Loader from '../components/Loader';
+import { useEffect } from 'react';
 
 const PlaceOrderPage = ({ history }) => {
   const cart = useSelector(state => state.cart);
+  const { loading, success, error, order } = useSelector(
+    state => state.orderCreate
+  );
   if (!cart.paymentMethod) history.push('/payment');
   const dispatch = useDispatch();
 
@@ -23,14 +29,40 @@ const PlaceOrderPage = ({ history }) => {
     cart.itemsPrice + cart.shippingPrice + cart.taxPrice
   );
 
+  useEffect(() => {
+    if (success) {
+      setTimeout(() => {
+        history.push(`/order/${order._id}`);
+      }, 3000);
+    }
+  }, [success, history, order]);
+
   const placeOrderHandler = event => {
     event.preventDefault();
+    dispatch(
+      createOrder({
+        orderItems: cart.cartItems,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice: cart.itemsPrice,
+        shippingPrice: cart.shippingPrice,
+        taxPrice: cart.taxPrice,
+        totalPrice: cart.totalPrice,
+      })
+    );
   };
   return (
     <>
       <CheckoutSteps step1 step2 step3 step4 />
+
       <Row>
         <Col md={8}>
+          {loading && <Loader />}
+          {success && (
+            <Message variant="success">Order placed successfully</Message>
+          )}
+          {error && <Message variant="danger">{error}</Message>}
+
           <ListGroup variant="flush">
             <ListGroup.Item>
               <h2>Order Items</h2>
