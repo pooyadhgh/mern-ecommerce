@@ -4,6 +4,7 @@ import HttpError from './models/httpError.js';
 import connectDB from './config/db.js';
 import productRoutes from './routes/products.js';
 import userRoutes from './routes/users.js';
+import orderRoutes from './routes/orders.js';
 
 dotenv.config();
 connectDB();
@@ -14,6 +15,7 @@ app.use(express.json());
 //Routes
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Notfound error middleware
 app.use((req, res, next) => {
