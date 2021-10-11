@@ -81,3 +81,22 @@ export const updateOrderToPaid = async (req, res, next) => {
 
   res.json(updatedOrder);
 };
+
+export const getMyOrders = async (req, res, next) => {
+  const userId = req.user._id;
+  let orders;
+
+  try {
+    orders = await Order.find({ user: userId });
+  } catch (err) {
+    const error = new HttpError('Could not find orders', 500);
+    return next(error);
+  }
+
+  if (!orders) {
+    const error = new HttpError('No order found', 404);
+    return next(error);
+  }
+
+  res.json(orders);
+};
