@@ -1,6 +1,7 @@
 import { Button, Col, Row, Image, ListGroup, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOrderDetails } from '../actions/orderActions';
+import { getOrderDetails, payOrder } from '../actions/orderActions';
+import { ORDER_PAY_RESET } from '../constants/orderConstants';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { useEffect } from 'react';
@@ -10,13 +11,28 @@ const OrderPage = ({ match }) => {
 
   const dispatch = useDispatch();
   const { loading, error, order } = useSelector(state => state.orderDetails);
+  const {
+    loading: loadingPay,
+    error: errorPay,
+    success,
+  } = useSelector(state => state.orderPay);
 
   useEffect(() => {
-    dispatch(getOrderDetails(orderId));
-  }, [dispatch, orderId]);
+    dispatch({ type: ORDER_PAY_RESET });
+    if (!order || order._id !== orderId || success) {
+      dispatch(getOrderDetails(orderId));
+    }
+  }, [order, orderId, dispatch, success]);
+
+  const payHandler = event => {
+    event.preventDefault();
+    if (!order.isPaid) dispatch(payOrder(orderId));
+  };
 
   return (
     <>
+      {errorPay && <Message variant="danger">{errorPay}</Message>}
+
       {loading ? (
         <Loader />
       ) : error ? (
@@ -66,7 +82,9 @@ const OrderPage = ({ match }) => {
                   {order.shippingAddress.city}, {order.shippingAddress.country}
                 </p>
                 {order.isDelivered ? (
-                  <Message variant="success">Order is delivered.</Message>
+                  <Message variant="success">
+                    Order is delivered on {order.deliveredAt}
+                  </Message>
                 ) : (
                   <Message variant="danger">
                     Order has not delivered yet
@@ -109,13 +127,18 @@ const OrderPage = ({ match }) => {
                 </ListGroup.Item>
 
                 <ListGroup.Item className="d-grid">
-                  <Button
-                    className="btn-block"
-                    type="button"
-                    disabled={order.orderItems.length === 0}
-                  >
-                    Pay
-                  </Button>
+                  {loadingPay ? (
+                    <Loader />
+                  ) : (
+                    <Button
+                      onClick={payHandler}
+                      className="btn-block"
+                      type="button"
+                      disabled={order.orderItems.length === 0}
+                    >
+                      Pay
+                    </Button>
+                  )}
                 </ListGroup.Item>
               </ListGroup>
             </Card>
