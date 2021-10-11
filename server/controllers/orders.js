@@ -73,7 +73,7 @@ export const updateOrderToPaid = async (req, res, next) => {
 
   let updatedOrder;
   try {
-    updatedOrder = await Order.save();
+    updatedOrder = await order.save();
   } catch (err) {
     const error = new HttpError('Could not save order', 500);
     return next(error);
