@@ -134,7 +134,7 @@ const OrderPage = ({ match }) => {
                       onClick={payHandler}
                       className="btn-block"
                       type="button"
-                      disabled={order.orderItems.length === 0}
+                      disabled={order.orderItems.length === 0 || order.isPaid}
                     >
                       Pay
                     </Button>
