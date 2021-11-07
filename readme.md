@@ -1,7 +1,7 @@
 # MERN-Ecommerce
 
 An E-Commerce platform built with the MERN stack & Redux. (MongoDB, Express.js, React.js, Node.js and Redux)
-Onlive Version: [MERN-Ecommerce](https://bit.ly/3Fav1tO)
+Onlive Version: [MERN-Ecommerce](https://bit.ly/2YrDetg)
 
 ## Sample User Logins
 
