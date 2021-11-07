@@ -34,7 +34,6 @@ dummydummy
 
 ## Features
 
-- Users and posts list page
 - Signup and Login features
 - User profile with orders
 - Full featured shopping cart
