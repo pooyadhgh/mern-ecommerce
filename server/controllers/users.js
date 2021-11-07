@@ -98,7 +98,7 @@ export const registerUser = async (req, res, next) => {
 };
 
 export const getUserProfile = async (req, res, next) => {
-  const userId = req.user._id;
+  const userId = req.user.id;
   let existingUser;
 
   // Check whether user exists or not
